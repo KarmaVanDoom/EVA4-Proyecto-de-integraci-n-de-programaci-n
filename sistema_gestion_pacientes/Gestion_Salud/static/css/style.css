@@ -1,9 +1,9 @@
 
-/* Variables de Colores - Estilo Salud Chile */
+
 :root {
-    --primary-color: #005696; /* Azul Institucional parecido a Fonasa/Minsal */
-    --secondary-color: #E6332A; /* Rojo detalle */
-    --bg-light: #f4f6f9; /* Fondo gris muy suave para la web */
+    --primary-color: #005696;
+    --secondary-color: #E6332A; 
+    --bg-light: #f4f6f9; 
     --text-dark: #333333;
     --white: #ffffff;
 }
@@ -21,7 +21,7 @@ body {
 .card-salud {
     border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra suave */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     background-color: var(--white);
     overflow: hidden;
 }
@@ -39,7 +39,7 @@ body {
 .btn-salud {
     background-color: var(--primary-color);
     color: var(--white);
-    border-radius: 50px; /* Botones redondeados modernos */
+    border-radius: 50px; 
     padding: 10px 25px;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -48,9 +48,9 @@ body {
 }
 
 .btn-salud:hover {
-    background-color: #003d6b; /* Azul más oscuro al pasar mouse */
+    background-color: #003d6b; 
     color: var(--white);
-    transform: translateY(-2px); /* Efecto elevación */
+    transform: translateY(-2px); 
 }
 
 /* Footer */

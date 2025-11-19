@@ -12,7 +12,7 @@ from .models import CustomUser
 
 
 class CustomLoginView(LoginView):
-    template_name = 'login.html'
+    template_name = 'Gestion_Salud/auth/login.html'
     authentication_form = CustomLoginForm
     redirect_authenticated_user = True 
     def get_success_url(self):
@@ -25,7 +25,7 @@ class CustomLogoutView(LogoutView):
     next_page = 'login'
 
 class IdentityVerificationView(FormView):
-    template_name = 'password_reset_verification.html'
+    template_name = 'Gestion_Salud/auth/password_reset_verification.html'
     form_class = IdentityVerificationForm
     success_url = reverse_lazy('password_reset_confirm')
     def form_valid(self, form):
@@ -35,7 +35,7 @@ class IdentityVerificationView(FormView):
         return super().form_valid(form)
 
 class CompletePasswordResetView(FormView):
-    template_name = 'password_reset_confirm.html'
+    template_name = 'Gestion_Salud/auth/password_reset_confirm.html'
     form_class = CustomSetPasswordForm
     success_url = reverse_lazy('login')
     def get_form_kwargs(self):
@@ -60,5 +60,5 @@ class CompletePasswordResetView(FormView):
 
 @method_decorator(never_cache, name='dispatch')
 class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'home.html'
+    template_name = 'Gestion_Salud/dashboard/home.html'
     login_url = 'login'
