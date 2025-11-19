@@ -1,0 +1,65 @@
+
+/* Variables de Colores - Estilo Salud Chile */
+:root {
+    --primary-color: #005696; /* Azul Institucional parecido a Fonasa/Minsal */
+    --secondary-color: #E6332A; /* Rojo detalle */
+    --bg-light: #f4f6f9; /* Fondo gris muy suave para la web */
+    --text-dark: #333333;
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tarjetas (Login, Formularios) */
+.card-salud {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra suave */
+    background-color: var(--white);
+    overflow: hidden;
+}
+
+.card-header-salud {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Botones Personalizados */
+.btn-salud {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: 50px; /* Botones redondeados modernos */
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    width: 100%;
+}
+
+.btn-salud:hover {
+    background-color: #003d6b; /* Azul más oscuro al pasar mouse */
+    color: var(--white);
+    transform: translateY(-2px); /* Efecto elevación */
+}
+
+/* Footer */
+.footer-salud {
+    margin-top: auto;
+    background-color: #e9ecef;
+    color: #6c757d;
+    padding: 15px 0;
+    font-size: 0.9rem;
+    text-align: center;
+    border-top: 1px solid #dee2e6;
+}
