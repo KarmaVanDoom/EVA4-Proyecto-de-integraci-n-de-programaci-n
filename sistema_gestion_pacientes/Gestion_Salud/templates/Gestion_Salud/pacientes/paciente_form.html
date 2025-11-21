@@ -1,0 +1,64 @@
+{% extends 'Gestion_Salud/layouts/base.html' %}
+
+{% block title %}Ficha de Paciente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-salud">
+            <div class="card-header-salud">
+                <h5 class="mb-0">
+                    <i class="fa-solid fa-file-medical"></i> Ficha Clínica
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h6 class="text-primary mb-3 border-bottom pb-2">Datos Personales</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">RUT</label>
+                            {{ form.rut }}
+                            <div class="text-danger small">{{ form.rut.errors.0 }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Fecha Nacimiento</label>
+                            {{ form.fecha_nacimiento }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nombres</label>
+                            {{ form.nombres }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Apellidos</label>
+                            {{ form.apellidos }}
+                        </div>
+                    </div>
+
+                    <h6 class="text-primary mb-3 border-bottom pb-2 mt-4">Datos de Ingreso</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Previsión</label>
+                            {{ form.prevision }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Área Asignada</label>
+                            {{ form.area_asignada }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estado Inicial</label>
+                            {{ form.estado }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5 d-md-flex justify-content-md-end">
+                        <a href="{% url 'paciente_list' %}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-salud px-5">Guardar Ficha</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

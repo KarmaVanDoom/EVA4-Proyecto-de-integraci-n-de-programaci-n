@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from .models import CustomUser, HealthPersonal
+from .models import Paciente
 
 #  Formulario de Login 
 class CustomLoginForm(AuthenticationForm):
@@ -42,11 +43,9 @@ class IdentityVerificationForm(forms.Form):
         rut_input = cleaned_data.get('rut')
         fecha_input = cleaned_data.get('fecha_nacimiento')
 
-        #  ¿Existen estos datos juntos?
         if username and rut_input and fecha_input:
             try:
                 user = CustomUser.objects.get(username=username)
-                # Accedemos al perfil usando el related_name definido en models.py
                 perfil = user.health_profile 
                 
                 # Comparamos los datos ingresados con los de la base de datos
@@ -69,3 +68,21 @@ class IdentityVerificationForm(forms.Form):
 #  Formulario para Establecer Nueva Contraseña
 class CustomSetPasswordForm(SetPasswordForm):
     pass
+
+
+# Formulario para Crear y editar los pacientes
+class PacienteForm(forms.ModelForm):
+    class Meta:
+        model = Paciente
+        fields = ['rut', 'nombres', 'apellidos', 'fecha_nacimiento', 'prevision', 'area_asignada', 'estado']
+        
+        # Bootstrap a cada campo
+        widgets = {
+            'rut': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12.345.678-9'}),
+            'nombres': forms.TextInput(attrs={'class': 'form-control'}),
+            'apellidos': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_nacimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'prevision': forms.Select(attrs={'class': 'form-select'}),
+            'area_asignada': forms.Select(attrs={'class': 'form-select'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}),
+        }

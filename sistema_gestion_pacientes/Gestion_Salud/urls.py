@@ -4,7 +4,10 @@ from .views import (
     CustomLogoutView, 
     IdentityVerificationView, 
     CompletePasswordResetView,
-    HomeView
+    HomeView,
+    PacienteListView,
+    PacienteCreateView,
+    PacienteUpdateView
 )
 
 urlpatterns = [
@@ -13,4 +16,7 @@ urlpatterns = [
     path('recuperar-clave/', IdentityVerificationView.as_view(), name='password_reset_verification'),
     path('recuperar-clave/confirmar/', CompletePasswordResetView.as_view(), name='password_reset_confirm'),
     path('', HomeView.as_view(), name='home'),
+    path('pacientes/', PacienteListView.as_view(), name='paciente_list'),
+    path('pacientes/nuevo/', PacienteCreateView.as_view(), name='paciente_create'),
+    path('pacientes/editar/<int:pk>/', PacienteUpdateView.as_view(), name='paciente_update'),
 ]

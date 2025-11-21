@@ -1,0 +1,76 @@
+{% extends 'Gestion_Salud/layouts/base.html' %}
+
+{% block title %}Listado de Pacientes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="text-primary"><i class="fa-solid fa-users-medical"></i> Gestión de Pacientes</h2>
+        <p class="text-muted">Listado general de pacientes ingresados.</p>
+    </div>
+    <a href="{% url 'paciente_create' %}" class="btn btn-salud" style="width: auto;">
+        <i class="fa-solid fa-plus"></i> Nuevo Ingreso
+    </a>
+</div>
+
+<div class="card card-salud">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Paciente</th>
+                        <th>RUT</th>
+                        <th>Previsión</th>
+                        <th>Área</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paciente in pacientes %}
+                    <tr>
+                        <td class="ps-4 fw-bold">
+                            {{ paciente.nombres }} {{ paciente.apellidos }}
+                            <div class="small text-muted">{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</div>
+                        </td>
+                        <td>{{ paciente.rut }}</td>
+                        <td><span class="badge bg-secondary">{{ paciente.prevision }}</span></td>
+                        <td>
+                            {% if paciente.area_asignada %}
+                                {{ paciente.area_asignada.nombre }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if paciente.estado == 'ALTA' %}
+                                <span class="badge bg-success">Alta Médica</span>
+                            {% elif paciente.estado == 'UCI' %}
+                                <span class="badge bg-danger">UCI / Crítico</span>
+                            {% elif paciente.estado == 'TRATAMIENTO' %}
+                                <span class="badge bg-primary">En Tratamiento</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">En Espera</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'paciente_update' paciente.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-pen-to-square"></i> Gestionar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-clipboard-user fa-3x mb-3"></i>
+                            <p>No hay pacientes registrados en el sistema.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
