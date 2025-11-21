@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, HealthPersonal
+from .models import CustomUser, HealthPersonal, Paciente, Area
 
 # Configuración para ver el Perfil de Salud dentro del mismo formulario de Usuario
 class HealthPersonalInline(admin.StackedInline):
@@ -19,6 +19,15 @@ class CustomUserAdmin(UserAdmin):
             return "-"
     get_cargo.short_description = 'Cargo'
 
-# Registramos los modelos
+# Configuración visual para el Admin de Pacientes 
+class PacienteAdmin(admin.ModelAdmin):
+    list_display = ('rut', 'nombres', 'apellidos', 'estado', 'area_asignada', 'prevision')
+    list_filter = ('estado', 'area_asignada', 'prevision')
+    search_fields = ('rut', 'nombres', 'apellidos')
+    ordering = ('-fecha_ingreso',)
+
+# Registramos todos los modelos
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(HealthPersonal)
+admin.site.register(Paciente, PacienteAdmin)
+admin.site.register(Area)
