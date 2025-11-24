@@ -86,3 +86,4 @@ class PacienteForm(forms.ModelForm):
             'area_asignada': forms.Select(attrs={'class': 'form-select'}),
             'estado': forms.Select(attrs={'class': 'form-select'}),
         }
+

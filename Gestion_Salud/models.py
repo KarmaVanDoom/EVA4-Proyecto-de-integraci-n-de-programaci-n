@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from .utils.mixins import RutModelMixin
 
 
 class CustomUser(AbstractUser):
@@ -17,7 +18,7 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-class HealthPersonal(models.Model):
+class HealthPersonal(RutModelMixin, models.Model):
     uuid = models.UUIDField(
         primary_key=True, 
         default=uuid.uuid4, 
@@ -30,7 +31,7 @@ class HealthPersonal(models.Model):
         related_name='health_profile'
     )
     
-    rut = models.CharField(max_length=12, help_text="Ej: 12.345.678-9")
+    rut = RutModelMixin.rut(max_length=12, help_text="Ej: 12.345.678-9")
     cargo = models.CharField(max_length=100)
     fecha_nacimiento = models.DateField(null=True, blank=True) 
 
