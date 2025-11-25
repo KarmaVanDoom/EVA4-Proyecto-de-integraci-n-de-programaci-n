@@ -7,22 +7,22 @@ class CustomUserAdmin(UserAdmin):
     """
     Configuración personalizada del admin para el modelo User
     """
-    list_display = ('username', 'rut', 'first_name', 'last_name_father', 'last_name_mother', 'position', 'is_staff')
+    list_display = ('username', 'rut', 'first_name', 'last_name', 'position', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'position')
-    search_fields = ('username', 'rut', 'first_name', 'last_name_father', 'institutional_email')
+    search_fields = ('username', 'rut', 'first_name', 'last_name', 'institutional_email')
     ordering = ('username',)
     
     # Agregar los campos personalizados al formulario de edición
     fieldsets = UserAdmin.fieldsets + (
         ('Información Personal Adicional', {
-            'fields': ('rut', 'last_name_father', 'last_name_mother', 'birth_date', 'institutional_email', 'position')
+            'fields': ('rut', 'birth_date', 'institutional_email', 'position')
         }),
     )
     
     # Agregar los campos personalizados al formulario de creación
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Información Personal Adicional', {
-            'fields': ('rut', 'last_name_father', 'last_name_mother', 'birth_date', 'institutional_email', 'position')
+            'fields': ('rut', 'birth_date', 'institutional_email', 'position')
         }),
     )
 

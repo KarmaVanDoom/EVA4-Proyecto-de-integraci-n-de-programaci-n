@@ -1,24 +1,30 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .fields import RutField
+from .utils.rut import format_rut
 
 
 class User(AbstractUser):
-    """
-    Modelo de usuario personalizado con RUT y datos adicionales.
-    Este es el modelo principal para autenticación y recuperación de contraseña.
-    """
+    
+    #Modelo de usuario personalizado con RUT y datos adicionales.
+    #Este es el modelo principal para autenticación y recuperación de contraseña.
+    
+    #ENUMS
+    POSITION_CHOICES = [
+        ('MEDICO', 'Médico'),
+        ('ENFERMERA', 'Enfermera'),
+        ('ADMINISTRATIVO', 'Administrativo'),
+        ('OTRO', 'Otro'),
+    ]
+    
     # Campos nuevos (los que NO vienen por defecto)
     rut = RutField(unique=True)
-
-    last_name_father = models.CharField(max_length=100, verbose_name="Apellido Paterno")
-    last_name_mother = models.CharField(max_length=100, verbose_name="Apellido Materno")
 
     birth_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Nacimiento")
 
     institutional_email = models.CharField(max_length=255, unique=True, verbose_name="Email Institucional")
 
-    position = models.CharField(max_length=100, verbose_name="Cargo")
+    position = models.CharField(max_length=100, choices=POSITION_CHOICES, verbose_name="Cargo")
 
     # AbstractUser ya incluye:
     # username, password, first_name, last_name, email,
@@ -33,7 +39,7 @@ class User(AbstractUser):
     
     def get_full_name(self):
         """Retorna nombre completo con apellidos"""
-        return f"{self.first_name} {self.last_name_father} {self.last_name_mother}".strip()
+        return f"{self.first_name} {self.last_name}".strip()
 
 #  Modelos para las Áreas del Hospital UCI, Urgencias, y esas cosas
 class Area(models.Model):

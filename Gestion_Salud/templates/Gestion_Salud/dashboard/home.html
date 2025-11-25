@@ -22,10 +22,10 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <strong>Cargo:</strong> {{ user.health_profile.cargo|default:"Sin asignar" }}
+                        <strong>Cargo:</strong> {{ user.position|default:"Sin asignar" }}
                     </li>
                     <li class="list-group-item">
-                        <strong>RUT:</strong> {{ user.health_profile.rut|default:"Sin asignar" }}
+                        <strong>RUT:</strong> {{ user.rut|default:"Sin asignar" }}
                     </li>
                     <li class="list-group-item">
                         <strong>Usuario:</strong> {{ user.username }}
