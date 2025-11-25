@@ -1,23 +1,31 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, HealthPersonal, Paciente, Area
+from .models import User, Paciente, Area
 
-# Configuración para ver el Perfil de Salud dentro del mismo formulario de Usuario
-class HealthPersonalInline(admin.StackedInline):
-    model = HealthPersonal
-    can_delete = False
-    verbose_name_plural = 'Ficha de Personal de Salud'
 
 class CustomUserAdmin(UserAdmin):
-    inlines = (HealthPersonalInline, )
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_cargo')
+    """
+    Configuración personalizada del admin para el modelo User
+    """
+    list_display = ('username', 'rut', 'first_name', 'last_name_father', 'last_name_mother', 'position', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'position')
+    search_fields = ('username', 'rut', 'first_name', 'last_name_father', 'institutional_email')
+    ordering = ('username',)
+    
+    # Agregar los campos personalizados al formulario de edición
+    fieldsets = UserAdmin.fieldsets + (
+        ('Información Personal Adicional', {
+            'fields': ('rut', 'last_name_father', 'last_name_mother', 'birth_date', 'institutional_email', 'position')
+        }),
+    )
+    
+    # Agregar los campos personalizados al formulario de creación
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Información Personal Adicional', {
+            'fields': ('rut', 'last_name_father', 'last_name_mother', 'birth_date', 'institutional_email', 'position')
+        }),
+    )
 
-    def get_cargo(self, obj):
-        try:
-            return obj.health_profile.cargo
-        except:
-            return "-"
-    get_cargo.short_description = 'Cargo'
 
 # Configuración visual para el Admin de Pacientes 
 class PacienteAdmin(admin.ModelAdmin):
@@ -26,8 +34,8 @@ class PacienteAdmin(admin.ModelAdmin):
     search_fields = ('rut', 'nombres', 'apellidos')
     ordering = ('-fecha_ingreso',)
 
+
 # Registramos todos los modelos
-admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(HealthPersonal)
+admin.site.register(User, CustomUserAdmin)
 admin.site.register(Paciente, PacienteAdmin)
 admin.site.register(Area)

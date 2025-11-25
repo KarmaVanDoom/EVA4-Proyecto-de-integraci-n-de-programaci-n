@@ -7,8 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
-from .forms.forms import CustomLoginForm, IdentityVerificationForm, CustomSetPasswordForm, PacienteForm
-from .models import CustomUser, Paciente
+from .forms import CustomLoginForm, IdentityVerificationForm, CustomSetPasswordForm, PacienteForm
+from .models import User, Paciente
 
 
 class CustomLoginView(LoginView):
@@ -42,7 +42,7 @@ class CompletePasswordResetView(FormView):
         kwargs = super().get_form_kwargs()
         user_id = self.request.session.get('reset_user_id')
         if user_id:
-            user = get_object_or_404(CustomUser, id=user_id)
+            user = get_object_or_404(User, id=user_id)
             kwargs['user'] = user 
         return kwargs
     def dispatch(self, request, *args, **kwargs):

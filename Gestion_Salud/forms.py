@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
-from .models import CustomUser, HealthPersonal
-from .models import Paciente
+from .models import User, Paciente
 
 #  Formulario de Login 
 class CustomLoginForm(AuthenticationForm):
@@ -45,23 +44,20 @@ class IdentityVerificationForm(forms.Form):
 
         if username and rut_input and fecha_input:
             try:
-                user = CustomUser.objects.get(username=username)
-                perfil = user.health_profile 
+                user = User.objects.get(username=username)
                 
                 # Comparamos los datos ingresados con los de la base de datos
-                if perfil.rut != rut_input:
+                if user.rut != rut_input:
                     raise forms.ValidationError("El RUT ingresado no coincide con el usuario.")
                 
-                if perfil.fecha_nacimiento != fecha_input:
+                if user.birth_date != fecha_input:
                     raise forms.ValidationError("La fecha de nacimiento no coincide.")
                 
                 # Si todo está bien, guardamos el usuario verificado para usarlo en la vista
                 self.verified_user = user
                 
-            except CustomUser.DoesNotExist:
+            except User.DoesNotExist:
                 raise forms.ValidationError("El usuario ingresado no existe.")
-            except HealthPersonal.DoesNotExist:
-                raise forms.ValidationError("Este usuario no tiene ficha de personal de salud activa.")
         
         return cleaned_data
 

@@ -1,46 +1,39 @@
-import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .utils.mixins import RutModelMixin
+from .fields import RutField
 
 
-class CustomUser(AbstractUser):
-    id = models.UUIDField(
-        primary_key=True, 
-        default=uuid.uuid4, 
-        editable=False
-    )
+class User(AbstractUser):
+    """
+    Modelo de usuario personalizado con RUT y datos adicionales.
+    Este es el modelo principal para autenticación y recuperación de contraseña.
+    """
+    # Campos nuevos (los que NO vienen por defecto)
+    rut = RutField(unique=True)
+
+    last_name_father = models.CharField(max_length=100, verbose_name="Apellido Paterno")
+    last_name_mother = models.CharField(max_length=100, verbose_name="Apellido Materno")
+
+    birth_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Nacimiento")
+
+    institutional_email = models.CharField(max_length=255, unique=True, verbose_name="Email Institucional")
+
+    position = models.CharField(max_length=100, verbose_name="Cargo")
+
+    # AbstractUser ya incluye:
+    # username, password, first_name, last_name, email,
+    # is_active, is_superuser, is_staff, date_joined, etc.
 
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
-
+        
     def __str__(self):
-        return self.username
-
-class HealthPersonal(RutModelMixin, models.Model):
-    uuid = models.UUIDField(
-        primary_key=True, 
-        default=uuid.uuid4, 
-        editable=False
-    )
+        return f"{self.username} ({self.rut})"
     
-    user = models.OneToOneField(
-        CustomUser, 
-        on_delete=models.CASCADE,
-        related_name='health_profile'
-    )
-    
-    rut = RutModelMixin.rut(max_length=12, help_text="Ej: 12.345.678-9")
-    cargo = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField(null=True, blank=True) 
-
-    class Meta:
-        verbose_name = 'Personal de Salud'
-        verbose_name_plural = 'Personal de Salud'
-
-    def __str__(self):
-        return f"{self.cargo} - {self.rut}"
+    def get_full_name(self):
+        """Retorna nombre completo con apellidos"""
+        return f"{self.first_name} {self.last_name_father} {self.last_name_mother}".strip()
 
 #  Modelos para las Áreas del Hospital UCI, Urgencias, y esas cosas
 class Area(models.Model):
