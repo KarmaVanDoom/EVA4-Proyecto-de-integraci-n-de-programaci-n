@@ -7,8 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
-from .forms import CustomLoginForm, IdentityVerificationForm, CustomSetPasswordForm, PacienteForm
-from .models import User, Paciente
+from .forms import CustomLoginForm, IdentityVerificationForm, CustomSetPasswordForm, PacienteForm, PatientRecordForm
+from .models import User, Paciente, PatientRecord
 
 
 class CustomLoginView(LoginView):
@@ -76,9 +76,30 @@ class PacienteCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('paciente_list')
     login_url = 'login'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['record_form'] = PatientRecordForm(self.request.POST)
+        else:
+            context['record_form'] = PatientRecordForm()
+        return context
+
     def form_valid(self, form):
-        messages.success(self.request, "Paciente ingresado correctamente.")
-        return super().form_valid(form)
+        context = self.get_context_data()
+        record_form = context['record_form']
+        
+        if record_form.is_valid():
+            self.object = form.save()
+            
+            record = record_form.save(commit=False)
+            record.patient = self.object
+            record.created_by = self.request.user
+            record.save()
+            
+            messages.success(self.request, "Paciente y Ficha Técnica ingresados correctamente.")
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 @method_decorator(never_cache, name='dispatch')
 class PacienteUpdateView(LoginRequiredMixin, UpdateView):

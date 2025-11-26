@@ -102,20 +102,19 @@ class CustomSetPasswordForm(SetPasswordForm):
 
 
 # Formulario para Crear y editar los pacientes
+# Formulario para Crear y editar los pacientes
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
-        fields = ['rut', 'nombres', 'apellidos', 'fecha_nacimiento', 'prevision', 'area_asignada', 'estado']
+        fields = ['rut', 'first_name', 'last_name_father', 'last_name_mother', 'birth_date', 'institutional_email']
         
-        # Bootstrap a cada campo
         widgets = {
             'rut': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12.345.678-9', 'id': 'id_rut'}),
-            'nombres': forms.TextInput(attrs={'class': 'form-control'}),
-            'apellidos': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha_nacimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'prevision': forms.Select(attrs={'class': 'form-select'}),
-            'area_asignada': forms.Select(attrs={'class': 'form-select'}),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name_father': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name_mother': forms.TextInput(attrs={'class': 'form-control'}),
+            'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'institutional_email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
     
     def clean_rut(self):
@@ -128,4 +127,18 @@ class PacienteForm(forms.ModelForm):
             except ValidationError as e:
                 raise forms.ValidationError(str(e))
         return rut
+
+from .models import PatientRecord
+
+class PatientRecordForm(forms.ModelForm):
+    class Meta:
+        model = PatientRecord
+        fields = ['healthcare_center', 'admission_date', 'discharge_date', 'discharge_details']
+        
+        widgets = {
+            'healthcare_center': forms.Select(attrs={'class': 'form-select'}),
+            'admission_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'discharge_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'discharge_details': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
 

@@ -14,7 +14,7 @@
             <div class="card-body p-4">
                 <form method="post">
                     {% csrf_token %}
-                    
+
                     <h6 class="text-primary mb-3 border-bottom pb-2">Datos Personales</h6>
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
@@ -24,33 +24,56 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Fecha Nacimiento</label>
-                            {{ form.fecha_nacimiento }}
+                            {{ form.birth_date }}
+                            <div class="text-danger small">{{ form.birth_date.errors.0 }}</div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">Nombres</label>
-                            {{ form.nombres }}
+                            {{ form.first_name }}
+                            <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Apellidos</label>
-                            {{ form.apellidos }}
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Apellido Paterno</label>
+                            {{ form.last_name_father }}
+                            <div class="text-danger small">{{ form.last_name_father.errors.0 }}</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Apellido Materno</label>
+                            {{ form.last_name_mother }}
+                            <div class="text-danger small">{{ form.last_name_mother.errors.0 }}</div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Email Institucional</label>
+                            {{ form.institutional_email }}
+                            <div class="text-danger small">{{ form.institutional_email.errors.0 }}</div>
                         </div>
                     </div>
 
-                    <h6 class="text-primary mb-3 border-bottom pb-2 mt-4">Datos de Ingreso</h6>
+                    {% if record_form %}
+                    <h6 class="text-primary mb-3 border-bottom pb-2 mt-4">Datos de Ingreso (Ficha Técnica)</h6>
                     <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Previsión</label>
-                            {{ form.prevision }}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Centro de Salud</label>
+                            {{ record_form.healthcare_center }}
+                            <div class="text-danger small">{{ record_form.healthcare_center.errors.0 }}</div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Área Asignada</label>
-                            {{ form.area_asignada }}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Fecha de Ingreso</label>
+                            {{ record_form.admission_date }}
+                            <div class="text-danger small">{{ record_form.admission_date.errors.0 }}</div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Estado Inicial</label>
-                            {{ form.estado }}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Fecha de Alta (Opcional)</label>
+                            {{ record_form.discharge_date }}
+                            <div class="text-danger small">{{ record_form.discharge_date.errors.0 }}</div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Detalles del Alta</label>
+                            {{ record_form.discharge_details }}
+                            <div class="text-danger small">{{ record_form.discharge_details.errors.0 }}</div>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div class="d-grid gap-2 mt-5 d-md-flex justify-content-md-end">
                         <a href="{% url 'paciente_list' %}" class="btn btn-outline-secondary me-md-2">Cancelar</a>

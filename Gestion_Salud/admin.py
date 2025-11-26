@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Paciente, Area
+from .models import User, Paciente, HealthcareCenter, PatientRecord
 
 
 class CustomUserAdmin(UserAdmin):
@@ -29,13 +29,17 @@ class CustomUserAdmin(UserAdmin):
 
 # Configuración visual para el Admin de Pacientes 
 class PacienteAdmin(admin.ModelAdmin):
-    list_display = ('rut', 'nombres', 'apellidos', 'estado', 'area_asignada', 'prevision')
-    list_filter = ('estado', 'area_asignada', 'prevision')
-    search_fields = ('rut', 'nombres', 'apellidos')
-    ordering = ('-fecha_ingreso',)
+    list_display = ('rut', 'first_name', 'last_name_father', 'last_name_mother', 'birth_date')
+    search_fields = ('rut', 'first_name', 'last_name_father')
+    ordering = ('-created_at',)
 
+class PatientRecordAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'healthcare_center', 'admission_date', 'discharge_date')
+    list_filter = ('healthcare_center', 'admission_date')
+    search_fields = ('patient__rut', 'patient__first_name')
 
 # Registramos todos los modelos
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Paciente, PacienteAdmin)
-admin.site.register(Area)
+admin.site.register(HealthcareCenter)
+admin.site.register(PatientRecord, PatientRecordAdmin)

@@ -41,47 +41,60 @@ class User(AbstractUser):
         """Retorna nombre completo con apellidos"""
         return f"{self.first_name} {self.last_name}".strip()
 
-#  Modelos para las Áreas del Hospital UCI, Urgencias, y esas cosas
-class Area(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
+# Modelo de Centros de Salud (Healthcare Centers)
+class HealthcareCenter(models.Model):
+    name = models.CharField(max_length=200, verbose_name="Nombre del Centro")
+    type = models.CharField(max_length=50, verbose_name="Tipo de Centro") # Ej: Hospital, Clínica
+    is_public = models.BooleanField(default=True, verbose_name="¿Es Público?")
+    region = models.CharField(max_length=100, verbose_name="Región")
+    city = models.CharField(max_length=100, verbose_name="Ciudad")
+    address = models.CharField(max_length=255, verbose_name="Dirección")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.name} ({self.type})"
 
-#  Modelo del Paciente
+# Modelo del Paciente (Patients)
 class Paciente(models.Model):
-    # Opciones para listas desplegables 
-    PREVISION_CHOICES = [
-        ('FONASA', 'Fonasa'),
-        ('ISAPRE', 'Isapre'),
-        ('PARTICULAR', 'Particular'),
-    ]
-
-    ESTADO_CHOICES = [
-        ('ESPERA', 'En Sala de Espera'),
-        ('TRATAMIENTO', 'En Tratamiento'),
-        ('UCI', 'En UCI / Crítico'),
-        ('ALTA', 'Dada de Alta'),
-    ]
-
-    # Datos Personales
-    rut = models.CharField(max_length=12, unique=True, help_text="Ej: 11.222.333-K")
-    nombres = models.CharField(max_length=100)
-    apellidos = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField()
+    rut = models.CharField(max_length=13, unique=True, help_text="Ej: 11.222.333-K")
+    first_name = models.CharField(max_length=100, verbose_name="Nombres")
+    last_name_father = models.CharField(max_length=100, verbose_name="Apellido Paterno")
+    last_name_mother = models.CharField(max_length=100, blank=True, null=True, verbose_name="Apellido Materno")
+    birth_date = models.DateField(verbose_name="Fecha de Nacimiento")
+    institutional_email = models.EmailField(max_length=255, blank=True, null=True, verbose_name="Email Institucional")
     
-    # Datos Clínicos
-    prevision = models.CharField(max_length=20, choices=PREVISION_CHOICES, default='FONASA')
-    area_asignada = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Área Asignada")
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='ESPERA')
-    
-    # Auditoría Cuándo llegó
-    fecha_ingreso = models.DateTimeField(auto_now_add=True)
-    ultima_actualizacion = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-fecha_ingreso'] # Los más nuevos primero
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.nombres} {self.apellidos} ({self.rut})"
+        return f"{self.first_name} {self.last_name_father} ({self.rut})"
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name_father} {self.last_name_mother or ''}".strip()
+
+# Historial del Paciente / Ficha Técnica (Patient Records)
+class PatientRecord(models.Model):
+    patient = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='records', verbose_name="Paciente")
+    healthcare_center = models.ForeignKey(HealthcareCenter, on_delete=models.CASCADE, verbose_name="Centro de Salud")
+    
+    admission_date = models.DateField(verbose_name="Fecha de Ingreso")
+    discharge_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Alta")
+    discharge_details = models.TextField(null=True, blank=True, verbose_name="Detalles del Alta")
+    
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_records')
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='updated_records')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-admission_date']
+
+    def __str__(self):
+        return f"Ficha {self.id} - {self.patient}"
