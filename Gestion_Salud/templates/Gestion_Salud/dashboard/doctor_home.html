@@ -1,0 +1,31 @@
+{% extends 'Gestion_Salud/layouts/base.html' %}
+
+{% block title %}Panel Médico{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-primary"><i class="fa-solid fa-user-doctor"></i> Panel de Control Médico</h2>
+        <p class="text-muted">Bienvenido, Dr/a. {{ user.get_full_name }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <i class="fa-solid fa-info-circle"></i> Vista exclusiva para personal médico. Aquí podrá gestionar sus
+            pacientes y fichas clínicas.
+        </div>
+        <!-- Placeholder para contenido futuro -->
+        <div class="card card-salud" style="min-height: 300px;">
+            <div class="card-body d-flex justify-content-center align-items-center text-muted">
+                <div class="text-center">
+                    <i class="fa-solid fa-stethoscope fa-3x mb-3"></i>
+                    <h5>Área de Trabajo Médico</h5>
+                    <p>Próximamente: Listado de pacientes asignados y gestión de fichas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
