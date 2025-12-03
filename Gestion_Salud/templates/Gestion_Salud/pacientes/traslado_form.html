@@ -1,0 +1,55 @@
+{% extends 'Gestion_Salud/layouts/base.html' %}
+
+{% block title %}Traslado / Alta de Paciente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-salud">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fa-solid fa-bed-pulse"></i> Gestión de Traslado / Alta</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Paciente</label>
+                    <div class="fw-bold fs-5">{{ object.patient.full_name }}</div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nueva Área / Ubicación</label>
+                        {{ form.area }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nuevo Estado</label>
+                        {{ form.status }}
+                    </div>
+
+                    <hr>
+                    <p class="text-muted small mb-2">Solo completar si se dará de Alta:</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Alta</label>
+                        {{ form.discharge_date }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Detalles / Indicaciones de Alta</label>
+                        {{ form.discharge_details }}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{% url 'doctor_home' %}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa-solid fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

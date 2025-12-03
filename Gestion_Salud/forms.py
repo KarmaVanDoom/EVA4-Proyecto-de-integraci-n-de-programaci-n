@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
-from .models import User, Paciente
+from .models import User, Paciente, PatientRecord, ClinicalObservation, Appointment
 from .utils.rut import clean_rut, format_rut
 from .utils.validators import validar_rut
 from django.core.exceptions import ValidationError
@@ -102,7 +102,6 @@ class CustomSetPasswordForm(SetPasswordForm):
 
 
 # Formulario para Crear y editar los pacientes
-# Formulario para Crear y editar los pacientes
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
@@ -128,17 +127,52 @@ class PacienteForm(forms.ModelForm):
                 raise forms.ValidationError(str(e))
         return rut
 
-from .models import PatientRecord
-
 class PatientRecordForm(forms.ModelForm):
     class Meta:
         model = PatientRecord
-        fields = ['healthcare_center', 'admission_date', 'discharge_date', 'discharge_details']
+        fields = ['healthcare_center', 'admission_date', 'area', 'status', 'medico_tratante', 'discharge_date', 'discharge_details']
         
         widgets = {
             'healthcare_center': forms.Select(attrs={'class': 'form-select'}),
             'admission_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'area': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'medico_tratante': forms.Select(attrs={'class': 'form-select'}),
             'discharge_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'discharge_details': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+class ClinicalObservationForm(forms.ModelForm):
+    class Meta:
+        model = ClinicalObservation
+        fields = ['detalle']
+        widgets = {
+            'detalle': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 4, 
+                'placeholder': 'Escriba la evolución clínica del paciente...'
+            }),
+        }
+
+class TrasladoForm(forms.ModelForm):
+    class Meta:
+        model = PatientRecord
+        fields = ['area', 'status', 'discharge_date', 'discharge_details']
+        widgets = {
+            'area': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'discharge_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'discharge_details': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Detalles del alta o traslado...'}),
+        }
+
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['patient', 'doctor', 'date', 'time', 'status']
+        widgets = {
+            'patient': forms.Select(attrs={'class': 'form-select'}),
+            'doctor': forms.Select(attrs={'class': 'form-select'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+        }

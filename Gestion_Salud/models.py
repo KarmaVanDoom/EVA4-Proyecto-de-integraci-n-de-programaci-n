@@ -93,8 +93,84 @@ class PatientRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Opciones de Área
+    AREA_CHOICES = [
+        ('UCI', 'Unidad de Cuidados Intensivos (UCI)'),
+        ('URGENCIAS', 'Urgencias'),
+        ('HOSPITALIZACION', 'Hospitalización'),
+        ('PARTO', 'Sala de Parto'),
+        ('LABORATORIO', 'Laboratorio'),
+        ('IMAGENOLOGIA', 'Imagenología'),
+        ('PABELLON', 'Pabellón'),
+        ('ESPERA', 'Sala de Espera'),
+    ]
+
+    # Opciones de Estado
+    STATUS_CHOICES = [
+        ('ESPERA', 'En Espera'),
+        ('TRATAMIENTO', 'En Tratamiento'),
+        ('PRE_OPERATORIO', 'Pre Operatorio'),
+        ('POST_OPERATORIO', 'Post Operatorio'),
+        ('ALTA', 'En Alta'),
+    ]
+
+    area = models.CharField(max_length=50, choices=AREA_CHOICES, default='ESPERA', verbose_name="Área / Sector")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='ESPERA', verbose_name="Estado del Paciente")
+    
+    medico_tratante = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        limit_choices_to={'position': 'MEDICO'},
+        related_name='pacientes_asignados',
+        verbose_name="Médico Tratante"
+    )
+
     class Meta:
         ordering = ['-admission_date']
 
     def __str__(self):
-        return f"Ficha {self.id} - {self.patient}"
+        return f"Ficha {self.id} - {self.patient} ({self.get_area_display()})"
+
+
+# Modelo de Observaciones Clínicas (Evolución)
+class ClinicalObservation(models.Model):
+    record = models.ForeignKey(PatientRecord, on_delete=models.CASCADE, related_name='observations', verbose_name="Ficha Clínica")
+    author = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="Médico Responsable")
+    detalle = models.TextField(verbose_name="Detalle Evolución")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha y Hora")
+
+    class Meta:
+        ordering = ['created_at'] # Orden cronológico (ascendente) para ver la historia
+        verbose_name = "Observación Clínica"
+        verbose_name_plural = "Observaciones Clínicas"
+
+    def __str__(self):
+        return f"Evolución por {self.author.get_full_name()} el {self.created_at.strftime('%d/%m/%Y %H:%M')}"
+
+# Modelo de Citas Médicas (Agendamiento)
+class Appointment(models.Model):
+    STATUS_CHOICES = [
+        ('PROGRAMADA', 'Programada'),
+        ('CONFIRMADA', 'Confirmada'),
+        ('CANCELADA', 'Cancelada'),
+        ('REALIZADA', 'Realizada'),
+    ]
+
+    patient = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='appointments', verbose_name="Paciente")
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'position': 'MEDICO'}, related_name='doctor_appointments', verbose_name="Médico")
+    date = models.DateField(verbose_name="Fecha")
+    time = models.TimeField(verbose_name="Hora")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PROGRAMADA', verbose_name="Estado")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['date', 'time']
+        verbose_name = "Cita Médica"
+        verbose_name_plural = "Citas Médicas"
+
+    def __str__(self):
+        return f"Cita {self.patient} con {self.doctor} el {self.date} a las {self.time}"

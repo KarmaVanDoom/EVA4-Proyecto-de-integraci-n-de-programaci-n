@@ -8,7 +8,7 @@
         <h2 class="text-primary"><i class="fa-solid fa-users-medical"></i> Gestión de Pacientes</h2>
         <p class="text-muted">Listado general de pacientes ingresados.</p>
     </div>
-    <a href="{% url 'paciente_create' %}" class="btn btn-salud" style="width: auto;">
+    <a href="{% url 'admision_create' %}" class="btn btn-salud" style="width: auto;">
         <i class="fa-solid fa-plus"></i> Nuevo Ingreso
     </a>
 </div>
@@ -21,8 +21,8 @@
                     <tr>
                         <th class="ps-4">Paciente</th>
                         <th>RUT</th>
-                        <th>Previsión</th>
-                        <th>Área</th>
+                        <th>Médico Tratante</th>
+                        <th>Área Actual</th>
                         <th>Estado</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
@@ -31,34 +31,57 @@
                     {% for paciente in pacientes %}
                     <tr>
                         <td class="ps-4 fw-bold">
-                            {{ paciente.nombres }} {{ paciente.apellidos }}
-                            <div class="small text-muted">{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</div>
+                            {{ paciente.first_name }} {{ paciente.last_name_father }} {{
+                            paciente.last_name_mother|default:"" }}
+                            <div class="small text-muted">{{ paciente.birth_date|date:"d/m/Y" }}</div>
                         </td>
                         <td>{{ paciente.rut }}</td>
-                        <td><span class="badge bg-secondary">{{ paciente.prevision }}</span></td>
+
+                        {% with latest_record=paciente.records.first %}
                         <td>
-                            {% if paciente.area_asignada %}
-                                {{ paciente.area_asignada.nombre }}
+                            {% if latest_record and latest_record.medico_tratante %}
+                            <i class="fa-solid fa-user-doctor text-primary me-1"></i>
+                            {{ latest_record.medico_tratante.get_full_name }}
                             {% else %}
-                                <span class="text-muted">-</span>
+                            <span class="text-muted small">Sin asignar</span>
                             {% endif %}
                         </td>
                         <td>
-                            {% if paciente.estado == 'ALTA' %}
-                                <span class="badge bg-success">Alta Médica</span>
-                            {% elif paciente.estado == 'UCI' %}
-                                <span class="badge bg-danger">UCI / Crítico</span>
-                            {% elif paciente.estado == 'TRATAMIENTO' %}
-                                <span class="badge bg-primary">En Tratamiento</span>
+                            {% if latest_record %}
+                            {{ latest_record.get_area_display }}
                             {% else %}
-                                <span class="badge bg-warning text-dark">En Espera</span>
+                            <span class="text-muted">Sin Ingreso</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if latest_record %}
+                            {% if latest_record.status == 'ALTA' %}
+                            <span class="badge bg-success">Alta Médica</span>
+                            {% elif latest_record.status == 'TRATAMIENTO' %}
+                            <span class="badge bg-primary">En Tratamiento</span>
+                            {% elif latest_record.status == 'PRE_OPERATORIO' %}
+                            <span class="badge bg-warning text-dark">Pre Operatorio</span>
+                            {% elif latest_record.status == 'POST_OPERATORIO' %}
+                            <span class="badge bg-info text-dark">Post Operatorio</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ latest_record.get_status_display }}</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="badge bg-secondary">Sin Ficha</span>
                             {% endif %}
                         </td>
                         <td class="text-end pe-4">
                             <a href="{% url 'paciente_update' paciente.id %}" class="btn btn-sm btn-outline-primary">
                                 <i class="fa-solid fa-pen-to-square"></i> Gestionar
                             </a>
+                            {% if latest_record and user.position == 'MEDICO' %}
+                            <a href="{% url 'agregar_evolucion' latest_record.id %}" class="btn btn-sm btn-outline-info"
+                                title="Agregar Evolución">
+                                <i class="fa-solid fa-notes-medical"></i>
+                            </a>
+                            {% endif %}
                         </td>
+                        {% endwith %}
                     </tr>
                     {% empty %}
                     <tr>

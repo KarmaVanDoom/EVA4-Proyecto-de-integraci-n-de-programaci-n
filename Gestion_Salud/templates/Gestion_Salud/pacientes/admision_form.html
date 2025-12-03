@@ -1,0 +1,72 @@
+{% extends 'Gestion_Salud/layouts/base.html' %}
+
+{% block title %}Admisión de Paciente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-salud shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fa-solid fa-hospital-user"></i> Ingreso / Admisión de Paciente</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fa-solid fa-circle-info me-2"></i>
+                    Ingrese el RUT del paciente. Si ya existe en el sistema, se creará automáticamente un nuevo ingreso
+                    (Ficha Clínica). Si es nuevo, se registrarán sus datos.
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.rut.id_for_label }}" class="form-label fw-bold">RUT *</label>
+                            {{ form.rut }}
+                            {% if form.rut.errors %}
+                            <div class="text-danger small">{{ form.rut.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.institutional_email.id_for_label }}" class="form-label">Email
+                                Institucional</label>
+                            {{ form.institutional_email }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label fw-bold">Nombres *</label>
+                            {{ form.first_name }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name_father.id_for_label }}" class="form-label fw-bold">Apellido
+                                Paterno *</label>
+                            {{ form.last_name_father }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name_mother.id_for_label }}" class="form-label">Apellido
+                                Materno</label>
+                            {{ form.last_name_mother }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.birth_date.id_for_label }}" class="form-label fw-bold">Fecha de
+                                Nacimiento *</label>
+                            {{ form.birth_date }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{% url 'paciente_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa-solid fa-save me-2"></i> Registrar Ingreso
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

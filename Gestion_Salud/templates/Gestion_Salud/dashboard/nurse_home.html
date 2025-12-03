@@ -1,29 +1,80 @@
 {% extends 'Gestion_Salud/layouts/base.html' %}
 
-{% block title %}Panel de Enfermería{% endblock %}
+{% block title %}Dashboard Enfermería{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
         <h2 class="text-primary"><i class="fa-solid fa-user-nurse"></i> Panel de Enfermería</h2>
-        <p class="text-muted">Bienvenido/a, {{ user.get_full_name }}</p>
+        <p class="text-muted">Monitoreo de pacientes por áreas.</p>
     </div>
+    <form method="get" class="d-flex gap-2">
+        <select name="area" class="form-select" onchange="this.form.submit()">
+            <option value="">Todas las Áreas</option>
+            {% for code, name in area_choices %}
+            {% if current_area == code %}
+            <option value="{{ code }}" selected>{{ name }}</option>
+            {% else %}
+            <option value="{{ code }}">{{ name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </form>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="alert alert-success">
-            <i class="fa-solid fa-info-circle"></i> Vista exclusiva para enfermería. Gestión de cuidados y monitoreo.
-        </div>
-        <!-- Placeholder para contenido futuro -->
-        <div class="card card-salud" style="min-height: 300px;">
-            <div class="card-body d-flex justify-content-center align-items-center text-muted">
-                <div class="text-center">
-                    <i class="fa-solid fa-heart-pulse fa-3x mb-3"></i>
-                    <h5>Estación de Enfermería</h5>
-                    <p>Próximamente: Control de signos vitales y administración de medicamentos.</p>
-                </div>
-            </div>
+<div class="card card-salud">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Paciente</th>
+                        <th>RUT</th>
+                        <th>Ubicación</th>
+                        <th>Estado</th>
+                        <th>Médico Tratante</th>
+                        <th class="text-end pe-4">Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td class="ps-4 fw-bold">
+                            {{ record.patient.full_name }}
+                        </td>
+                        <td>{{ record.patient.rut }}</td>
+                        <td>
+                            <span class="badge bg-secondary">{{ record.get_area_display }}</span>
+                        </td>
+                        <td>
+                            {% if record.status == 'UCI' %}
+                            <span class="badge bg-danger">CRÍTICO</span>
+                            {% else %}
+                            <span class="badge bg-light text-dark border">{{ record.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.medico_tratante %}
+                            {{ record.medico_tratante.get_full_name }}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-outline-info" disabled>
+                                <i class="fa-solid fa-eye"></i> Ver Ficha
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <p>No hay pacientes en esta área.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
